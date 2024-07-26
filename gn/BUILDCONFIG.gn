@@ -10,6 +10,7 @@ is_skia_standalone = true
 declare_args() {
   is_official_build = false
   is_component_build = false
+  is_msvc = false
   ndk = ""
 
   # Android 5.0, Lollipop
@@ -125,18 +126,19 @@ if (is_android) {
   }
 }
 
-if (target_os == "win") {
+if (target_os == "win" && is_msvc) {
   # By default we look for 2017 (Enterprise, Pro, and Community), then 2015. If MSVC is installed in a
   # non-default location, you can set win_vc to inform us where it is.
 
   if (win_vc == "") {
     win_vc = exec_script("//gn/find_msvc.py", [], "trim string")
   }
+  
   assert(win_vc != "")  # Could not find VC installation. Set win_vc to your VC
                         # directory.
 }
 
-if (target_os == "win") {
+if (target_os == "win" && is_msvc) {
   if (win_toolchain_version == "") {
     win_toolchain_version = exec_script("//gn/highest_version_dir.py",
                                         [
@@ -229,7 +231,7 @@ if (!is_official_build) {
       [ "//gn/skia:warnings_for_public_headers" ]
 }
 
-if (is_win) {
+if (is_msvc) {
   # Windows tool chain
   set_default_toolchain("//gn/toolchain:msvc")
   default_toolchain_name = "msvc"

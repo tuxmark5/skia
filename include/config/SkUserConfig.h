@@ -102,7 +102,7 @@
    Skia consumers can provide their own definitions of these macros to
    integrate with their own compilers and build system.
 */
-//#define SK_ALWAYS_INLINE inline __attribute__((always_inline))
+#define SK_ALWAYS_INLINE inline __attribute__((always_inline))
 //#define SK_NEVER_INLINE __attribute__((noinline))
 //#define SK_PRINTF_LIKE(A, B) __attribute__((format(printf, (A), (B))))
 //#define SK_NO_SANITIZE(A) __attribute__((no_sanitize(A)))

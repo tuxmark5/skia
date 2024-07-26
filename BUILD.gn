@@ -171,7 +171,7 @@ is_x86 = current_cpu == "x64" || current_cpu == "x86"
 opts("hsw") {
   enabled = is_x86
   sources = skia_opts.hsw_sources
-  if (is_win) {
+  if (is_msvc) {
     cflags = [ "/arch:AVX2" ]
   } else {
     cflags = [ "-march=haswell" ]
@@ -181,7 +181,7 @@ opts("hsw") {
 opts("skx") {
   enabled = is_x86
   sources = skia_opts.skx_sources
-  if (is_win) {
+  if (is_msvc) {
     cflags = [ "/arch:AVX512" ]
   } else {
     cflags = [ "-march=skylake-avx512" ]
@@ -1802,7 +1802,7 @@ if (skia_enable_tools) {
   }
 
   config("cpp17") {
-    if (is_win) {
+    if (is_msvc) {
       cflags_cc = [ "/std:c++17" ]
     } else {
       cflags_cc = [ "-std=c++17" ]
@@ -2864,7 +2864,7 @@ if (skia_enable_tools) {
         "tools/fiddle/examples.cpp",
         "tools/fiddle/examples.h",
       ]
-      if (is_win) {
+      if (is_msvc) {
         cflags = [
           "/wd4756",  # Overflow in constant arithmetic
           "/wd4305",  # truncation from 'double' to 'float'

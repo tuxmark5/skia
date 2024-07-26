@@ -62,7 +62,7 @@ config("default") {
   # Disable warnings about unknown attributes.
   # (These unknown attribute warnings are on by default, so we don't make
   # disabling them part of :warnings, as some targets remove :warnings.)
-  if (is_win && !is_clang) {
+  if (is_msvc) {
     cflags += [
       "/wd5030",
       "/wd5051",
@@ -97,7 +97,7 @@ config("default") {
     asmflags += [ target_triple ]
   }
 
-  if (is_win) {
+  if (is_msvc) {
     if (is_clang && current_cpu == "arm64") {
       cflags += [ "--target=arm64-windows" ]
     }
@@ -136,6 +136,17 @@ config("default") {
       "$win_sdk/Lib/$win_sdk_version/ucrt/$current_cpu",
       "$win_sdk/Lib/$win_sdk_version/um/$current_cpu",
       "$win_vc/Tools/MSVC/$win_toolchain_version/lib/$current_cpu",
+    ]
+  } else if (is_win) {
+    cflags += [
+      "-fstrict-aliasing",
+      "-fvisibility=hidden",
+      "-femulated-tls",
+    ]
+    cflags_cc += [
+      "-std=c++17",
+      "-fvisibility-inlines-hidden",
+      "-femulated-tls",
     ]
   } else {
     cflags += [
@@ -424,7 +435,7 @@ config("warnings") {
     }
   }
 
-  if (is_win) {
+  if (is_msvc) {
     cflags += [
       "/W3",  # Turn on lots of warnings.
 
@@ -670,7 +681,7 @@ config("debug_symbols") {
       "-gline-tables-only",
       "-funwind-tables",  # Helps make in-process backtraces fuller.
     ]
-  } else if (is_win) {
+  } else if (is_msvc) {
     cflags = [ "/Z7" ]
     if (is_clang) {
       cflags += [ "-gcodeview-ghash" ]
@@ -688,7 +699,7 @@ config("debug_symbols") {
 
 config("no_rtti") {
   if (sanitize != "ASAN") {  # -fsanitize=vptr requires RTTI
-    if (is_win) {
+    if (is_msvc) {
       cflags_cc = [ "/GR-" ]
     } else {
       cflags_cc = [ "-fno-rtti" ]
@@ -699,7 +710,7 @@ config("no_rtti") {
 
 config("optimize") {
   ldflags = []
-  if (is_win) {
+  if (is_msvc) {
     cflags = [
       "/O2",
       "/Zc:inline",
@@ -748,7 +759,7 @@ config("NDEBUG") {
 }
 
 config("trivial_abi") {
-  if (is_clang) {
+  if (is_msvc) {
     defines = [ "SK_TRIVIAL_ABI=[[clang::trivial_abi]]" ]
   }
 }
